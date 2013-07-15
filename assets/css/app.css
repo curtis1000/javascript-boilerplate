@@ -1,0 +1,11 @@
+.display-block {
+    display: block;
+}
+
+.registration-form .tooltip-inner {
+    background-color: rgb(206, 0, 0);
+}
+
+.registration-form .tooltip.right .tooltip-arrow {
+    border-right-color: rgb(206, 0, 0);
+}
