@@ -63,6 +63,7 @@ var APP = APP || {};
             }
 
             this.isEnabled = true;
+            this.hasClickedSubmit = false;
 
             // Setup any event handlers
 
@@ -73,7 +74,6 @@ var APP = APP || {};
 
             // key up in text fields
             this.$textInput.on('keyup', function(e) {
-                console.log('keyup');
                 this.onKeyUpTextField(e);
             }.bind(this));
 
@@ -112,12 +112,27 @@ var APP = APP || {};
 
         /**
          * Event Handler
+         * Run validation check/display error messages on submit
          * @param e
          */
         onClickSubmit: function(e) {
             e.preventDefault();
             if (! this.isValid()) {
                 this.showErrors();
+                this.hasClickedSubmit = true;
+            }
+        },
+
+        /***
+         * Event Handler
+         * Run validation check/display error messages on keyup only after the user has clicked submit
+         * @param e
+         */
+        onKeyUpTextField: function(e) {
+            if (this.hasClickedSubmit) {
+                if (! this.isValid()) {
+                    this.showErrors();
+                }
             }
         },
 
@@ -139,17 +154,62 @@ var APP = APP || {};
             // delete any previous error message data
             this.$form.find('[' + this.errorMsgAttribute + ']').removeAttr(this.errorMsgAttribute);
 
-            // check first name field
-            if (this.$firstName.val() === '') {
+            // check all 'value required' fields
+            this.$form.find('.js-validation-value-required').each(function(index, element) {
 
-                // invalid, attach error message to the dom element
-                this.$firstName.attr(this.errorMsgAttribute, 'Field cannot be blank');
+                var $element = $(element);
 
-                // the form is not valid
-                isValid = false;
-            }
+                if ($element.val() === '') {
+                    //try to get the label
+                    var label = $('label[for="' + $element.attr('id') + '"]').html();
+                    // set the error message
+                    $element.attr(this.errorMsgAttribute, this.validationErrorMessages.valueRequired(label));
+                    // form is not valid
+                    isValid = false;
+                }
+            }.bind(this));
+
+            // check all 'email address' fields
+            this.$form.find('.js-validation-email-address').each(function(index, element) {
+
+                var $element = $(element);
+
+                var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+                if (! re.test($element.val())) {
+                    //try to get the label
+                    var label = $('label[for="' + $element.attr('id') + '"]').html();
+                    // set the error message
+                    $element.attr(this.errorMsgAttribute, this.validationErrorMessages.invalid(label));
+                    // form is not valid
+                    isValid = false;
+                }
+            }.bind(this));
 
             return isValid;
+        },
+
+        validationErrorMessages: {
+            valueRequired: function(label) {
+                var msg;
+
+                if (typeof label === 'undefined') {
+                    msg = 'Field cannot be blank.';
+                } else {
+                    msg = label + ' cannot be blank';
+                }
+                return msg;
+            },
+            invalid: function(label) {
+                var msg;
+
+                if (typeof label === 'undefined') {
+                    msg = 'Field is invalid.';
+                } else {
+                    msg = label + ' is invalid.';
+                }
+                return msg;
+            }
         },
 
         /**
@@ -159,7 +219,13 @@ var APP = APP || {};
         showErrors: function() {
             this.$form.find('[' + this.errorMsgAttribute + ']').each(function(index, element) {
                 // use $(element) because we are binding APP.RegistrationForm to 'this'
-                $(element).tooltip({title: $(element).attr(this.errorMsgAttribute), placement: 'right', trigger: 'manual'});
+                var config = {
+                    title: $(element).attr(this.errorMsgAttribute),
+                    placement: 'right',
+                    trigger: 'manual',
+                    animation: false
+                };
+                $(element).tooltip(config);
                 $(element).tooltip('show');
             }.bind(this));
         },
@@ -173,16 +239,6 @@ var APP = APP || {};
                 // use $(element) because we are binding APP.RegistrationForm to 'this'
                 $(element).tooltip('destroy');
             }.bind(this));
-        },
-
-        /***
-         * Event Handler
-         * @param e
-         */
-        onKeyUpTextField: function(e) {
-            if (! this.isValid()) {
-                this.showErrors();
-            }
         }
     };
 })(APP);
