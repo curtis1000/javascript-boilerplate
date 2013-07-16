@@ -39,8 +39,9 @@ var APP = APP || {};
         createChildren: function() {
             this.$form = $('.registration-form');
             this.$submit = this.$form.find('.submit');
-            this.$firstName = this.$form.find('.first-name');
             this.$textInput = this.$form.find('[type="text"]');
+            this.$valueRequired = this.$form.find('.js-validation-value-required');
+            this.$emailAddress = this.$form.find('.js-validation-email-address');
             return this;
         },
 
@@ -155,7 +156,7 @@ var APP = APP || {};
             this.$form.find('[' + this.errorMsgAttribute + ']').removeAttr(this.errorMsgAttribute);
 
             // check all 'value required' fields
-            this.$form.find('.js-validation-value-required').each(function(index, element) {
+            this.$valueRequired.each(function(index, element) {
 
                 var $element = $(element);
 
@@ -170,7 +171,7 @@ var APP = APP || {};
             }.bind(this));
 
             // check all 'email address' fields
-            this.$form.find('.js-validation-email-address').each(function(index, element) {
+            this.$emailAddress.each(function(index, element) {
 
                 var $element = $(element);
 
