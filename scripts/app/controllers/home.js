@@ -10,6 +10,9 @@ requirejs.config({
     "shim": {
         "bootstrap": {
             "deps": ["jquery"]
+        },
+        "views/registration-form": {
+            "deps": ["models/registration-form"]
         }
     }
 });
@@ -17,8 +20,9 @@ requirejs.config({
 /**
  * Define the Register Controller
  */
-define(["bootstrap", "jquery", "views/registration-form"], function($) {
+define(["bootstrap", "jquery", "models/registration-form", "views/registration-form"], function($) {
 
     // Registration Form view module
-    APP.RegistrationForm.init();
+    APP.RegistrationFormModel.init();
+    APP.RegistrationFormView.init();
 });

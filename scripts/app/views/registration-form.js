@@ -1,5 +1,5 @@
 /**
- * @fileOverview RegistrationForm View Module File
+ * @fileOverview RegistrationFormView Module File
  *
  * @author Curtis Branum <curtis.branum@gmail.com>
  * @version 1.0
@@ -10,7 +10,7 @@ var APP = APP || {};
 (function (APP) {
     'use strict';
 
-    APP.RegistrationForm = {
+    APP.RegistrationFormView = {
 
         /**
          * Initializes the UI Component View
@@ -37,11 +37,10 @@ var APP = APP || {};
          * Should only be run on initialization of the view
          */
         createChildren: function() {
-            this.$form = $('.registration-form');
-            this.$submit = this.$form.find('.submit');
+            this.$form = $('.js-registration-form');
+            this.$submit = this.$form.find('.js-submit');
             this.$textInput = this.$form.find('[type="text"]');
-            this.$valueRequired = this.$form.find('.js-validation-value-required');
-            this.$emailAddress = this.$form.find('.js-validation-email-address');
+            this.model = APP.RegistrationFormModel;
             return this;
         },
 
@@ -118,7 +117,8 @@ var APP = APP || {};
          */
         onClickSubmit: function(e) {
             e.preventDefault();
-            if (! this.isValid()) {
+            this.hideErrors();
+            if (! this.model.isValid()) {
                 this.showErrors();
                 this.hasClickedSubmit = true;
             }
@@ -131,85 +131,11 @@ var APP = APP || {};
          */
         onKeyUpTextField: function(e) {
             if (this.hasClickedSubmit) {
-                if (! this.isValid()) {
+                console.log('checking');
+                this.hideErrors();
+                if (! this.model.isValid()) {
                     this.showErrors();
                 }
-            }
-        },
-
-        /**
-         * Validator, checks for validation errors, sets validation error messages in the dom
-         * @returns {boolean}
-         */
-        isValid: function() {
-
-            // init to true
-            var isValid = true;
-
-            // used here and in showErrors()
-            this.errorMsgAttribute = 'data-error-msg';
-
-            // hide any previous error message ui
-            this.hideErrors();
-
-            // delete any previous error message data
-            this.$form.find('[' + this.errorMsgAttribute + ']').removeAttr(this.errorMsgAttribute);
-
-            // check all 'value required' fields
-            this.$valueRequired.each(function(index, element) {
-
-                var $element = $(element);
-
-                if ($element.val() === '') {
-                    //try to get the label
-                    var label = $('label[for="' + $element.attr('id') + '"]').html();
-                    // set the error message
-                    $element.attr(this.errorMsgAttribute, this.validationErrorMessages.valueRequired(label));
-                    // form is not valid
-                    isValid = false;
-                }
-            }.bind(this));
-
-            // check all 'email address' fields
-            this.$emailAddress.each(function(index, element) {
-
-                var $element = $(element);
-
-                var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-                if (! re.test($element.val())) {
-                    //try to get the label
-                    var label = $('label[for="' + $element.attr('id') + '"]').html();
-                    // set the error message
-                    $element.attr(this.errorMsgAttribute, this.validationErrorMessages.invalid(label));
-                    // form is not valid
-                    isValid = false;
-                }
-            }.bind(this));
-
-            return isValid;
-        },
-
-        validationErrorMessages: {
-            valueRequired: function(label) {
-                var msg;
-
-                if (typeof label === 'undefined') {
-                    msg = 'Field cannot be blank.';
-                } else {
-                    msg = label + ' cannot be blank';
-                }
-                return msg;
-            },
-            invalid: function(label) {
-                var msg;
-
-                if (typeof label === 'undefined') {
-                    msg = 'Field is invalid.';
-                } else {
-                    msg = label + ' is invalid.';
-                }
-                return msg;
             }
         },
 
@@ -218,10 +144,10 @@ var APP = APP || {};
          * implemented as bootstrap tooltips
          */
         showErrors: function() {
-            this.$form.find('[' + this.errorMsgAttribute + ']').each(function(index, element) {
+            this.$form.find('[' + this.model.errorMsgAttribute + ']').each(function(index, element) {
                 // use $(element) because we are binding APP.RegistrationForm to 'this'
                 var config = {
-                    title: $(element).attr(this.errorMsgAttribute),
+                    title: $(element).attr(this.model.errorMsgAttribute),
                     placement: 'right',
                     trigger: 'manual',
                     animation: false
@@ -236,7 +162,7 @@ var APP = APP || {};
          * implemented as bootstrap tooltips
          */
         hideErrors: function () {
-            this.$form.find('[' + this.errorMsgAttribute + ']').each(function(index, element) {
+            this.$form.find('[' + this.model.errorMsgAttribute + ']').each(function(index, element) {
                 // use $(element) because we are binding APP.RegistrationForm to 'this'
                 $(element).tooltip('destroy');
             }.bind(this));
