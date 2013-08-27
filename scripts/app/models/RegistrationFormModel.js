@@ -1,9 +1,15 @@
-var APP = APP || {};
+/**
+ * @fileOverview RegistrationFormModel Module File
+ *
+ * @author Curtis Branum <curtis.branum@gmail.com>
+ * @version 2.0
+ */
 
-(function (APP) {
+define(['jquery'], function($) {
+
     'use strict';
 
-    APP.RegistrationFormModel = {
+    var RegistrationFormModel = {
 
         /**
          * initialize this model
@@ -94,4 +100,5 @@ var APP = APP || {};
         }
     };
 
-}(APP));
+    return RegistrationFormModel;
+});

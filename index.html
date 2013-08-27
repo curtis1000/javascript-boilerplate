@@ -18,7 +18,14 @@
     </style>
     <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 
-    <script data-main="scripts/app/controllers/home" src="scripts/lib/require.js"></script>
+    <!-- All Javascript runs through Require.js -->
+    <script src="scripts/lib/require.js"></script>
+    <script>
+        /* load a common config, load controller on callback */
+        require(['scripts/app/config.js'], function (config) {
+            require(['scripts/app/controllers/HomeController.js']);
+        });
+    </script>
 </head>
 
 <body>

@@ -2,15 +2,14 @@
  * @fileOverview RegistrationFormView Module File
  *
  * @author Curtis Branum <curtis.branum@gmail.com>
- * @version 1.0
+ * @version 2.0
  */
 
-var APP = APP || {};
+define(['jquery', 'RegistrationFormModel', 'bootstrap'], function ($, RegistrationFormModel) {
 
-(function (APP) {
     'use strict';
 
-    APP.RegistrationFormView = {
+    var RegistrationFormView = {
 
         /**
          * Initializes the UI Component View
@@ -37,10 +36,10 @@ var APP = APP || {};
          * Should only be run on initialization of the view
          */
         createChildren: function() {
+            this.model = RegistrationFormModel;
             this.$form = $('.js-registration-form');
             this.$submit = this.$form.find('.js-submit');
             this.$textInput = this.$form.find('[type="text"]');
-            this.model = APP.RegistrationFormModel;
             return this;
         },
 
@@ -168,4 +167,6 @@ var APP = APP || {};
             }.bind(this));
         }
     };
-})(APP);
+
+    return RegistrationFormView;
+});
